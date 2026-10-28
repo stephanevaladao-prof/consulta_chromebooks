@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f6b67">
+<title>Consulta de Chromebook</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <p class="eyebrow">Inventário de Chromebooks</p>
+    <h1>Consulta pelo número de série</h1>
+    <p class="lead">Digite o N/S, inteiro ou só um pedaço (a partir de 4 caracteres), ou o patrimônio. Aparecem o que foi anotado no Word, o que o sistema diz, o estado e onde o equipamento está.</p>
+
+    <form class="search" id="form" autocomplete="off">
+      <label class="sr" for="q">Número de série ou patrimônio</label>
+      <input id="q" type="search" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="Ex.: 09S29QBR707480N" enterkeyhint="search" disabled>
+      <button type="button" class="icon-btn" id="btn-scan" title="Ler código de barras com a câmera" hidden aria-label="Ler código de barras com a câmera">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M7 9v6M10.5 9v6M14 9v6M17 9v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <button type="submit" class="go" id="btn-go" disabled>Buscar</button>
+    </form>
+    <div class="recent" id="recent" hidden></div>
+  </header>
+
+  <div class="msg" id="msg" hidden></div>
+  <p class="muted status" id="status" aria-live="polite">Carregando a planilha…</p>
+
+  <main id="results" aria-live="polite"></main>
+
+  <footer class="foot">
+    <span class="muted" id="src-info"></span>
+    <span class="foot-btns">
+      <button class="link" type="button" id="btn-reload">Recarregar</button>
+      <label class="link" for="file-in">Escolher planilha</label>
+      <input type="file" id="file-in" accept=".xlsx,.xls" hidden>
+    </span>
+  </footer>
+</div>
+
+<div class="scan" id="scan" hidden role="dialog" aria-modal="true" aria-label="Leitor de código de barras">
+  <video id="video" playsinline muted></video>
+  <div class="scan-bar"><span id="scan-msg">Aponte a câmera para o código de barras da etiqueta.</span><button type="button" class="go" id="scan-close">Fechar</button></div>
+</div>
+
+<script src="xlsx.full.min.js"></script>
+<script>if (!window.XLSX) { document.write('<script src="vendor/xlsx.full.min.js"><\/script>'); }</script>
+<script>if (!window.XLSX) { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>'); }</script>
+<script src="app.js"></script>
+</body>
+</html>
