@@ -40,6 +40,13 @@
     return { id: id, titulo: 'Carrinho ' + num, cor: cor + (m && m[1] === '13' ? (cor ? ', ' : '') + 'quebrados' : '') };
   }
 
+  function modeloSn(sn, padrao) {
+    var n = norm(sn);
+    if (n.indexOf('09S29Q') === 0) return 'Samsung Chromebook 4 prata';
+    if (n.indexOf('NXG54AL') === 0) return 'Acer Chromebook R11 CB5-132T branco';
+    if (n.indexOf('NXH0HAL0018') === 0) return 'Acer Chromebook 11 C731 preto';
+    return padrao || '';
+  }
   var RE_FORA = /n[ãa]o liga|n[ãa]o est[áa] ligando|n[ãa]o carrega|tela quebrada|imposs[íi]vel de usar|totalmente quebrado|com defeito|n[ãa]o est[áa] pr[óo]prio|problema na tela|tela piscando sozinha|tela est[áa] com problema|tremendo/i;
   var RE_RESSALVA = /dobradi[çc]a|abre e fecha|soltando|v[áa]rias teclas|n[ãa]o est[ãa]o funcionando|power|piscando/i;
   function uso(t) { if (RE_FORA.test(t)) return 'fora'; if (RE_RESSALVA.test(t)) return 'ressalva'; return 'ok'; }
@@ -178,14 +185,14 @@
     var ci = cartInfo(w.cart), sis = sysDe(w), u = uso(w.estado);
     var card = h('article', 'card');
     var bd = u === 'fora' ? badge('b-bad', 'Fora de uso') : u === 'ressalva' ? badge('b-warn', 'Usável, com defeito') : badge('b-ok', 'Usável');
-    card.appendChild(cabecalho('Onde está', ci.titulo + ' · nº ' + w.n, [ci.cor ? 'cor ' + ci.cor : '', w.modelo].filter(Boolean).join(' · '), bd));
+    card.appendChild(cabecalho('Onde está', ci.titulo + ' · nº ' + w.n, [ci.cor ? 'carrinho ' + ci.cor : '', modeloSn(w.sn, w.modelo)].filter(Boolean).join(' · '), bd));
 
     var cols = h('div', 'cols'), a = h('div', 'col'), b = h('div', 'col');
     a.appendChild(h('h3', null, 'O que eu anotei (Word)'));
     var difSn = sis && norm(sis.sn) !== norm(w.sn);
     a.appendChild(linha('N/S ditado', w.sn, { mono: true, diff: difSn }));
     a.appendChild(linha('Patrimônio', w.pat, { vazio: 'não localizado' }));
-    a.appendChild(linha('Modelo informado', w.modelo));
+    a.appendChild(linha('Modelo', modeloSn(w.sn, w.modelo)));
     a.appendChild(linha('Estado informado', w.estado, { vazio: 'nenhum defeito anotado' }));
 
     b.appendChild(h('h3', null, 'O que o sistema diz'));
@@ -194,7 +201,7 @@
       b.appendChild(linha('N. Série', sis.sn, { mono: true, diff: difSn }));
       b.appendChild(linha('Local', localBonito(sis.local), { diff: difLoc }));
       b.appendChild(linha('Situação', sis.sit));
-      b.appendChild(linha('Modelo', sis.modelo));
+      b.appendChild(linha('Modelo no cadastro', sis.modelo));
     } else {
       b.appendChild(linha('N. Série', '', { vazio: 'não existe no sistema' }));
       b.appendChild(linha('Local', '', { vazio: '—' }));
@@ -214,7 +221,7 @@
 
   function cardSoSis(s) {
     var ci = cartInfo(s.local), card = h('article', 'card');
-    card.appendChild(cabecalho('Cadastrado no sistema em', ci.titulo, s.modelo, badge('b-info', 'Não apareceu no Word')));
+    card.appendChild(cabecalho('Cadastrado no sistema em', ci.titulo, modeloSn(s.sn, s.modelo), badge('b-info', 'Não apareceu no Word')));
     var cols = h('div', 'cols'), a = h('div', 'col'), b = h('div', 'col');
     a.appendChild(h('h3', null, 'O que eu anotei (Word)'));
     a.appendChild(linha('N/S ditado', '', { vazio: 'não apareceu em nenhum Word' }));
@@ -222,7 +229,7 @@
     b.appendChild(linha('N. Série', s.sn, { mono: true }));
     b.appendChild(linha('Local', localBonito(s.local)));
     b.appendChild(linha('Situação', s.sit));
-    b.appendChild(linha('Modelo', s.modelo));
+    b.appendChild(linha('Modelo no cadastro', s.modelo));
     cols.appendChild(a); cols.appendChild(b); card.appendChild(cols);
     var cs = casosDe(null, s, '', ''), abertosS = cs.filter(function (c) { return !c.ver; }), resolvidos = cs.filter(function (c) { return c.ver; });
     if (resolvidos.length && !abertosS.length) {
@@ -237,7 +244,7 @@
 
   function cardCom(c) {
     var card = h('article', 'card');
-    card.appendChild(cabecalho('Situação', 'Em comodato', c.modelo, badge('b-info', 'Comodato')));
+    card.appendChild(cabecalho('Situação', 'Em comodato', modeloSn(c.sn, c.modelo), badge('b-info', 'Comodato')));
     var cols = h('div', 'cols'), a = h('div', 'col'), b = h('div', 'col');
     a.appendChild(h('h3', null, 'Lista de comodato'));
     a.appendChild(linha('N/S', c.sn, { mono: true }));
